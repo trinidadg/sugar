@@ -20,11 +20,13 @@ import logging
 from sugar3.graphics import tray
 
 from jarabe import config
+from jarabe.frame.navigable import Navigable
 
 
-class DevicesTray(tray.HTray):
+class DevicesTray(tray.HTray, Navigable):
     def __init__(self):
         tray.HTray.__init__(self, align=tray.ALIGN_TO_END)
+        Navigable.__init__(self)
 
         for f in os.listdir(os.path.join(config.ext_path, 'deviceicon')):
             if f.endswith('.py') and not f.startswith('__'):
@@ -47,7 +49,9 @@ class DevicesTray(tray.HTray):
             else:
                 break
         self.add_item(view, index=index)
+        self.nav_queue.append(view)
         view.show()
 
     def remove_device(self, view):
         self.remove_item(view)
+        del self.nav_queue[self.nav_queue.index(view)]

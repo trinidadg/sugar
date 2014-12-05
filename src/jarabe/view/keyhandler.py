@@ -44,6 +44,8 @@ _actions_table = {
     'F4': 'zoom_activity',
     'F5': 'open_search',
     'F6': 'frame',
+    'Right': 'frame_right',
+    'Left': 'frame_left',
     'XF86AudioMute': 'volume_mute',
     'F11': 'volume_down',
     'XF86AudioLowerVolume': 'volume_down',
@@ -156,6 +158,12 @@ class KeyHandler(object):
 
     def handle_frame(self, event_time):
         self._frame.notify_key_press()
+
+    def handle_frame_right(self, event_time):
+        self._frame.notify_right_press()
+
+    def handle_frame_left(self, event_time):
+        self._frame.notify_left_press()
 
     def handle_logout(self, event_time):
         if "SUGAR_DEVELOPER" in os.environ:

@@ -22,6 +22,7 @@ from jarabe.view.buddymenu import BuddyMenu
 from jarabe.frame.frameinvoker import FrameWidgetInvoker
 from jarabe.model import shell
 from jarabe.model.buddy import get_owner_instance
+from jarabe.frame.navigable import Navigable
 from jarabe.model import neighborhood
 
 
@@ -39,12 +40,14 @@ class FriendIcon(TrayIcon):
         palette = BuddyMenu(self._buddy)
         palette.props.icon_visible = False
         palette.set_group_id('frame')
+        self.set_palette(palette)
         return palette
 
 
-class FriendsTray(VTray):
+class FriendsTray(VTray, Navigable):
     def __init__(self):
         VTray.__init__(self)
+        Navigable.__init__(self)
 
         self._shared_activity = None
         self._buddies = {}
@@ -61,6 +64,7 @@ class FriendsTray(VTray):
 
         icon = FriendIcon(buddy)
         self.add_item(icon)
+        self.nav_queue.append(icon)
         icon.show()
 
         self._buddies[buddy.props.key] = icon
@@ -71,10 +75,12 @@ class FriendsTray(VTray):
 
         self.remove_item(self._buddies[buddy.props.key])
         del self._buddies[buddy.props.key]
+        del self.nav_queue[self.nav_queue.index(self.buddies[buddy.props.key])]
 
     def clear(self):
         for item in self.get_children():
             self.remove_item(item)
+            del self.nav_queue[self.nav_queue.index(item)]
             item.destroy()
         self._buddies = {}
 

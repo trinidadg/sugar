@@ -27,10 +27,11 @@ from sugar3.graphics.palette import Palette
 from sugar3.graphics.radiotoolbutton import RadioToolButton
 
 from jarabe.frame.frameinvoker import FrameWidgetInvoker
+from jarabe.frame.navigable import Navigable
 from jarabe.model import shell
 
 
-class ZoomToolbar(Gtk.Toolbar):
+class ZoomToolbar(Gtk.Toolbar, Navigable):
     __gsignals__ = {
         'level-clicked': (GObject.SignalFlags.RUN_FIRST, None,
                           ([]))
@@ -38,6 +39,7 @@ class ZoomToolbar(Gtk.Toolbar):
 
     def __init__(self):
         Gtk.Toolbar.__init__(self)
+        Navigable.__init__(self)
 
         # we shouldn't be mirrored in RTL locales
         self.set_direction(Gtk.TextDirection.LTR)
@@ -63,6 +65,8 @@ class ZoomToolbar(Gtk.Toolbar):
                              _('F4'),
                              shell.ShellModel.ZOOM_ACTIVITY)
 
+        self.nav_queue = [self._mesh_button, self._groups_button,
+                          self._home_button, self._activity_button]
         shell_model = shell.get_model()
         self._set_zoom_level(shell_model.zoom_level)
         shell_model.zoom_level_changed.connect(self.__zoom_level_changed_cb)

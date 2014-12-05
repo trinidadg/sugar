@@ -71,6 +71,8 @@ class Frame(object):
 
         self._palette_group = palettegroup.get_group('frame')
 
+        self.navigation_queue = []
+        self.navigation_position = 0
         self._left_panel = None
         self._right_panel = None
         self._top_panel = None
@@ -84,9 +86,9 @@ class Frame(object):
         self._event_area.show()
 
         self._top_panel = self._create_top_panel()
+        self._right_panel = self._create_right_panel()
         self._bottom_panel = self._create_bottom_panel()
         self._left_panel = self._create_left_panel()
-        self._right_panel = self._create_right_panel()
 
         screen = Gdk.Screen.get_default()
         screen.connect('size-changed', self._size_changed_cb)
@@ -128,6 +130,10 @@ class Frame(object):
         self._animator.add(_Animation(self, 1.0))
         self._animator.start()
 
+        self.navigation_position = 0
+        self.nav_action = self.navigation_queue[
+            self.navigation_position].start_navigation()
+
     def move(self, pos):
         self.current_position = pos
         self._update_position()
@@ -139,10 +145,12 @@ class Frame(object):
         panel.append(zoom_toolbar, expand=False)
         zoom_toolbar.show()
         zoom_toolbar.connect('level-clicked', self._level_clicked_cb)
+        self.navigation_queue.append(zoom_toolbar)
 
         activities_tray = ActivitiesTray()
         panel.append(activities_tray)
         activities_tray.show()
+        self.navigation_queue.append(activities_tray)
 
         return panel
 
@@ -152,6 +160,7 @@ class Frame(object):
         devices_tray = DevicesTray()
         panel.append(devices_tray)
         devices_tray.show()
+        self.navigation_queue.append(devices_tray)
 
         return panel
 
@@ -161,6 +170,7 @@ class Frame(object):
         tray = FriendsTray()
         panel.append(tray)
         tray.show()
+        self.navigation_queue.append(tray)
 
         return panel
 
@@ -214,6 +224,30 @@ class Frame(object):
 
     def notify_key_press(self):
         self._key_listener.key_press()
+
+    def notify_right_press(self):
+        if self.visible:
+            if self.nav_action == 1 or self.nav_action == 2:
+                self.navigation_position += 1
+                string = "" % ()
+                logging.debug(string)
+                if self.navigation_position == len(self.navigation_queue):
+                    self.navigation_position = 0
+                self.nav_action = self.navigation_queue[
+                    self.navigation_position].start_navigation()
+            self.nav_action = self.navigation_queue[
+                self.navigation_position].navigation_right()
+
+    def notify_left_press(self):
+        if self.visible:
+            if self.nav_action == -1 or self.nav_action == 2:
+                self.navigation_position -= 1
+                if self.navigation_position == -1:
+                    self.navigation_position = len(self.navigation_queue)
+                self.nav_action = self.navigation_queue[
+                    self.navigation_position].navigate_from_end()
+            self.nav_action = self.navigation_queue[
+                self.navigation_position].navigation_left()
 
     def add_notification(self, icon, corner=Gtk.CornerType.TOP_LEFT,
                          duration=_NOTIFICATION_DURATION):

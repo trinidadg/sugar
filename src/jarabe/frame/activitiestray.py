@@ -50,6 +50,7 @@ from jarabe.model import filetransfer
 from jarabe.model import notifications
 from jarabe.view.palettes import JournalPalette, CurrentActivityPalette
 from jarabe.frame.frameinvoker import FrameWidgetInvoker
+from jarabe.frame.navigable import Navigable
 from jarabe.frame.notification import NotificationIcon
 from jarabe.frame.notification import NotificationButton
 from jarabe.frame.notification import NotificationPulsingIcon
@@ -233,9 +234,10 @@ class InvitePalette(Palette):
         self.emit('remove-invite')
 
 
-class ActivitiesTray(HTray):
+class ActivitiesTray(HTray, Navigable):
     def __init__(self):
         HTray.__init__(self)
+        Navigable.__init__(self)
 
         self._buttons = {}
         self._buttons_by_name = {}
@@ -281,6 +283,8 @@ class ActivitiesTray(HTray):
             button.show()
 
             self.add_item(button)
+            if button is not None:
+                self.nav_queue.append(button)
             self._buttons_by_name[name] = button
 
         if hasattr(button, 'show_badge'):
@@ -309,6 +313,7 @@ class ActivitiesTray(HTray):
 
         button = ActivityButton(home_activity, group)
         self.add_item(button)
+        self.nav_queue.append(button)
         self._buttons[home_activity] = button
         self._buttons_by_name[home_activity.get_activity_id()] = button
         button.connect('clicked', self.__activity_clicked_cb, home_activity)
@@ -318,6 +323,7 @@ class ActivitiesTray(HTray):
         logging.debug('__activity_removed_cb: %r', home_activity)
         button = self._buttons[home_activity]
         self.remove_item(button)
+        del self.nav_queue[self.nav_queue.index(button)]
         del self._buttons[home_activity]
         del self._buttons_by_name[home_activity.get_activity_id()]
 
