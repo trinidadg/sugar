@@ -383,6 +383,7 @@ class ActivitiesTray(HTray, Navigable):
         item = InviteButton(invite)
         item.connect('remove-invite', self.__remove_invite_cb, invite)
         self.add_item(item)
+        self.nav_queue.append(item)
         item.show()
         self._invite_to_item[invite] = item
 
@@ -401,6 +402,7 @@ class ActivitiesTray(HTray, Navigable):
             button = OutgoingTransferButton(file_transfer)
 
         self.add_item(button)
+        self.nav_queue.append(button)
         button.show()
 
 

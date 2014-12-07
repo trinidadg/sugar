@@ -176,6 +176,7 @@ class Frame(object):
 
     def _create_left_panel(self):
         panel = ClipboardPanelWindow(self, Gtk.PositionType.LEFT)
+        self.navigation_queue.append(panel._clipboard_tray)
 
         return panel
 
@@ -227,27 +228,38 @@ class Frame(object):
 
     def notify_right_press(self):
         if self.visible:
-            if self.nav_action == 1 or self.nav_action == 2:
+            if self.nav_action == 1 or self.nav_action == 2 or \
+                    self.nav_action == -2:
                 self.navigation_position += 1
-                string = "" % ()
-                logging.debug(string)
                 if self.navigation_position == len(self.navigation_queue):
                     self.navigation_position = 0
                 self.nav_action = self.navigation_queue[
                     self.navigation_position].start_navigation()
-            self.nav_action = self.navigation_queue[
-                self.navigation_position].navigation_right()
+                if self.nav_action == -2:
+                    self.notify_right_press()
+            else:
+                self.nav_action = self.navigation_queue[
+                    self.navigation_position].navigation_right()
 
     def notify_left_press(self):
         if self.visible:
-            if self.nav_action == -1 or self.nav_action == 2:
+            logging.debug("Frame: %d %d" % (self.nav_action, self.navigation_position))
+            if self.nav_action == -1 or self.nav_action == 2 \
+                    or self.nav_action == -2:
                 self.navigation_position -= 1
                 if self.navigation_position == -1:
-                    self.navigation_position = len(self.navigation_queue)
+                    self.navigation_position = len(self.navigation_queue) - 1
                 self.nav_action = self.navigation_queue[
                     self.navigation_position].navigate_from_end()
-            self.nav_action = self.navigation_queue[
-                self.navigation_position].navigation_left()
+                if self.nav_action == -2:
+                    self.notify_left_press()
+            else:
+                self.nav_action = self.navigation_queue[
+                    self.navigation_position].navigation_left()
+
+    def notify_enter_press(self):
+        if self.visible:
+            self.navigation_queue[self.navigation_position].enter_key_pressed()
 
     def add_notification(self, icon, corner=Gtk.CornerType.TOP_LEFT,
                          duration=_NOTIFICATION_DURATION):

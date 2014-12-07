@@ -73,6 +73,7 @@ class DeviceView(TrayIcon):
         palette = AudioPalette(device_label, output_label, input_label,
                                output_model=self._audio_output_model,
                                input_model=self._audio_input_model)
+        self.set_palette(palette)
         palette.set_group_id('frame')
         return palette
 

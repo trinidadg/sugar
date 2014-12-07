@@ -24,6 +24,7 @@ from sugar3.graphics import style
 
 from jarabe.frame import clipboard
 from jarabe.frame.clipboardicon import ClipboardIcon
+from jarabe.frame.navigable import Navigable
 
 
 class _ContextMap(object):
@@ -56,12 +57,13 @@ class _ContextMap(object):
         return context in self._context_map
 
 
-class ClipboardTray(tray.VTray):
+class ClipboardTray(tray.VTray, Navigable):
 
     MAX_ITEMS = Gdk.Screen.height() / style.GRID_CELL_SIZE - 2
 
     def __init__(self):
         tray.VTray.__init__(self, align=tray.ALIGN_TO_END)
+        Navigable.__init__(self)
         self._icons = {}
         self._context_map = _ContextMap()
 
@@ -111,6 +113,7 @@ class ClipboardTray(tray.VTray):
 
         icon = ClipboardIcon(cb_object, group)
         self.add_item(icon)
+        self.nav_queue.append(icon)
         icon.show()
         self._icons[cb_object.get_id()] = icon
 
@@ -125,6 +128,7 @@ class ClipboardTray(tray.VTray):
     def _object_deleted_cb(self, cb_service, object_id):
         icon = self._icons[object_id]
         self.remove_item(icon)
+        del self.nav_queue[self.nav_queue.index(icon)]
         del self._icons[object_id]
         # select the last available icon
         if self._icons:

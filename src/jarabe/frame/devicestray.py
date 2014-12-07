@@ -49,7 +49,9 @@ class DevicesTray(tray.HTray, Navigable):
             else:
                 break
         self.add_item(view, index=index)
-        self.nav_queue.append(view)
+        self.nav_queue.reverse()
+        self.nav_queue.insert(index, view)
+        self.nav_queue.reverse()
         view.show()
 
     def remove_device(self, view):

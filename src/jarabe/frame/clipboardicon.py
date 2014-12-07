@@ -67,6 +67,7 @@ class ClipboardIcon(RadioToolButton):
     def create_palette(self):
         palette = ClipboardMenu(self._cb_object)
         palette.set_group_id('frame')
+        self.set_palette(palette)
         return palette
 
     def get_object_id(self):
