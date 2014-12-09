@@ -16,9 +16,10 @@ class Navigable:
         if size == -1:
             return -2
         button = self.nav_queue[self.nav_pos]
-        if button.get_palette() is None:
-            button.create_palette()
-        button.get_palette().popup()
+        # if button.get_palette() is None:
+        #     button.create_palette()
+        button.palette_invoker.notify_mouse_enter()
+        # button.get_palette().popup()
         if size == 0:
             return 2
         if self.nav_pos == 0:

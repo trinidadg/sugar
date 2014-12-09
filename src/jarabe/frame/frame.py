@@ -243,7 +243,8 @@ class Frame(object):
 
     def notify_left_press(self):
         if self.visible:
-            logging.debug("Frame: %d %d" % (self.nav_action, self.navigation_position))
+            logging.debug("Frame: %d %d" %
+                          (self.nav_action, self.navigation_position))
             if self.nav_action == -1 or self.nav_action == 2 \
                     or self.nav_action == -2:
                 self.navigation_position -= 1

@@ -50,7 +50,6 @@ class SpeechDeviceView(TrayIcon):
         label = GLib.markup_escape_text(_('Speech'))
         palette = SpeechPalette(label, manager=self._manager)
         palette.set_group_id('frame')
-        self.set_palette(palette)
         return palette
 
 

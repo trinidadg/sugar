@@ -40,7 +40,6 @@ class FriendIcon(TrayIcon):
         palette = BuddyMenu(self._buddy)
         palette.props.icon_visible = False
         palette.set_group_id('frame')
-        self.set_palette(palette)
         return palette
 
 
