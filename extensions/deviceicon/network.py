@@ -776,7 +776,6 @@ class GsmDeviceView(TrayIcon):
 
         self.set_palette(palette)
         self._palette = palette
-        self.set_palette(palette)
 
         props = dbus.Interface(self._device, dbus.PROPERTIES_IFACE)
         props.GetAll(network.NM_DEVICE_IFACE, byte_arrays=True,
