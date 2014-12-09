@@ -46,6 +46,7 @@ _actions_table = {
     'F6': 'frame',
     'Right': 'frame_right',
     'Left': 'frame_left',
+    'Return': 'frame_enter',
     'XF86AudioMute': 'volume_mute',
     'F11': 'volume_down',
     'XF86AudioLowerVolume': 'volume_down',
@@ -161,6 +162,9 @@ class KeyHandler(object):
 
     def handle_frame_right(self, event_time):
         self._frame.notify_right_press()
+
+    def handle_frame_enter(self, event_time):
+        self._frame.notify_enter_press()
 
     def handle_frame_left(self, event_time):
         self._frame.notify_left_press()
