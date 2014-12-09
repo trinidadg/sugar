@@ -774,7 +774,9 @@ class GsmDeviceView(TrayIcon):
         palette.connect('gsm-connect', self.__gsm_connect_cb)
         palette.connect('gsm-disconnect', self.__gsm_disconnect_cb)
 
+        self.set_palette(palette)
         self._palette = palette
+        self.set_palette(palette)
 
         props = dbus.Interface(self._device, dbus.PROPERTIES_IFACE)
         props.GetAll(network.NM_DEVICE_IFACE, byte_arrays=True,
